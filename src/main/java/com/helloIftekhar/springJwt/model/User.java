@@ -35,59 +35,55 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(
-            mappedBy = "user",
-            cascade = {
-                    CascadeType.DETACH, CascadeType.MERGE,
-                    CascadeType.PERSIST, CascadeType.REFRESH
-            }
-
-    )
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="roleId")
     @JsonIgnore
-    private List<Address> addressList;
-
-    @OneToMany(
-            mappedBy = "user",
-            cascade = {
-                    CascadeType.DETACH, CascadeType.MERGE,
-                    CascadeType.PERSIST, CascadeType.REFRESH
-            }
-    )
-    @JsonIgnore
-    private List<Order> orderList;
-
-    @Enumerated(value = EnumType.STRING)
     private Role role;
 
+    @ManyToOne
+    @JoinColumn(name = "departmentId")
+    private Department department;
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<Token> tokens;
 
+    @OneToMany(mappedBy = "user")
+    private List<Attendance> attendances;
 
+    @OneToMany(mappedBy = "user")
+    private List<Task> tasks;
+
+    @OneToMany(mappedBy = "user")
+    @JsonIgnore
+    private List<Salary> salaries;
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority(role.getRoleName()));
     }
 }

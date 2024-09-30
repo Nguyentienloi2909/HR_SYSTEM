@@ -2,8 +2,10 @@ package com.helloIftekhar.springJwt.service;
 
 
 import com.helloIftekhar.springJwt.model.AuthenticationResponse;
+import com.helloIftekhar.springJwt.model.Role;
 import com.helloIftekhar.springJwt.model.Token;
 import com.helloIftekhar.springJwt.model.User;
+import com.helloIftekhar.springJwt.repository.RoleRepository;
 import com.helloIftekhar.springJwt.repository.TokenRepository;
 import com.helloIftekhar.springJwt.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,16 +31,20 @@ public class AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
 
+    private final RoleRepository roleRepository;
+
     public AuthenticationService(UserRepository repository,
                                  PasswordEncoder passwordEncoder,
                                  JwtService jwtService,
                                  TokenRepository tokenRepository,
-                                 AuthenticationManager authenticationManager) {
+                                 AuthenticationManager authenticationManager,
+                                 RoleRepository roleRepository) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.tokenRepository = tokenRepository;
         this.authenticationManager = authenticationManager;
+        this.roleRepository = roleRepository;
     }
 
     public AuthenticationResponse register(User request) {
@@ -55,8 +61,11 @@ public class AuthenticationService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
 
-        user.setRole(request.getRole());
+//        user.setRole(request.getRole());
 
+        Role role = roleRepository.findByRoleName(request.getRole().getRoleName())
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+        user.setRole(role);
         user = repository.save(user);
 
         String accessToken = jwtService.generateAccessToken(user);
