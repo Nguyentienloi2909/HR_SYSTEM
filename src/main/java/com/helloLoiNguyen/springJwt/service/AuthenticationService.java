@@ -10,6 +10,7 @@ import com.helloLoiNguyen.springJwt.repository.TokenRepository;
 import com.helloLoiNguyen.springJwt.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,12 +34,13 @@ public class AuthenticationService {
 
     private final RoleRepository roleRepository;
 
+    @Autowired
     public AuthenticationService(UserRepository repository,
                                  PasswordEncoder passwordEncoder,
                                  JwtService jwtService,
                                  TokenRepository tokenRepository,
-                                 AuthenticationManager authenticationManager,
-                                 RoleRepository roleRepository) {
+                                 AuthenticationManager authenticationManager, RoleRepository roleRepository
+    ) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
@@ -60,14 +62,11 @@ public class AuthenticationService {
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-
-//        user.setRole(request.getRole());
-
-        Role role = roleRepository.findByRoleName(request.getRole().getRoleName())
-                .orElseThrow(() -> new RuntimeException("Role not found"));
+        Role role = roleRepository.findByRoleName(request.getRole().getRoleName()).get();
         user.setRole(role);
-        user = repository.save(user);
 
+        user.setDepartment(request.getDepartment());
+        user = repository.save(user);
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
 
@@ -77,6 +76,7 @@ public class AuthenticationService {
 
     }
 
+//    login
     public AuthenticationResponse authenticate(User request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    Optional<User> findByUsername(String email);
+    Optional<User> findByUsername(String username);
     public List<User> getALlUser();
     public Boolean addUser(User user);
     public Boolean update(User user);

@@ -34,7 +34,7 @@ public class JwtService {
     }
 
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        return extractClaim(token, Claims::getSubject); // sub(username/id) , iat(thời gian bắt đầu token) of payload
     }
 
 
@@ -75,9 +75,9 @@ public class JwtService {
 
     private Claims extractAllClaims(String token) {
         return Jwts
-                .parser()
-                .verifyWith(getSigninKey())
-                .build()
+                .parser() //Tạo một đối tượng parser để phân tích JWT token.
+                .verifyWith(getSigninKey()) // xác minh chữ ký
+                .build()    //xây dựng và hoàn tất cấu hình parser
                 .parseSignedClaims(token)
                 .getPayload();
     }
@@ -93,10 +93,10 @@ public class JwtService {
 
     private String generateToken(User user, long expireTime) {
         String token = Jwts
-                .builder()
+                .builder() // tạo builder
                 .subject(user.getUsername())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + expireTime ))
+                .issuedAt(new Date(System.currentTimeMillis())) // thời gian tạo token
+                .expiration(new Date(System.currentTimeMillis() + expireTime )) // thời gian hết hạn
                 .signWith(getSigninKey())
                 .compact();
 

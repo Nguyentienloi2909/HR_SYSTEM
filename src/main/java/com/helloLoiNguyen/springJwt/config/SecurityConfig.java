@@ -44,7 +44,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
-                        req->req.requestMatchers("/login/**","/register/**", "/refresh_token/**", "/logon")
+                        req->req.requestMatchers("/login/**","/register/**", "/refresh_token/**", "/logon", "/perform_login")
                                 .permitAll()
                                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
                                 .requestMatchers("/home").authenticated() // mới thêm
@@ -66,8 +66,8 @@ public class SecurityConfig {
                         ))
                 .formLogin(form -> form
                         .loginPage("/logon") // URL của trang đăng nhập
-                        .usernameParameter("username") // Tên của input cho trường email
-                        .passwordParameter("password") // Tên của input cho trường mật khẩu
+//                        .usernameParameter("username") // Tên của input cho trường email
+//                        .passwordParameter("password") // Tên của input cho trường mật khẩu
                         .loginProcessingUrl("/perform_login")
                         .defaultSuccessUrl("/home") // URL chuyển đến sau khi đăng nhập thành công
                         .failureUrl("/login?error=true") // URL chuyển đến khi đăng nhập thất bại

@@ -34,13 +34,12 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="roleId")
-    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name="roleId", unique = false)
     private Role role;
 
     @ManyToOne
-    @JoinColumn(name = "departmentId")
+    @JoinColumn(name = "departmentId", unique = false)
     private Department department;
 
     @OneToMany(mappedBy = "user")
@@ -82,6 +81,7 @@ public class User implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.getRoleName()));
     }
