@@ -41,7 +41,7 @@ public class HomeController {
 
     @GetMapping("/home")
     public String homePage() {
-        return "home"; // Trả về tên file home.html
+        return "home"; // Trả về tên file home.html dfdfdfddftesst
     }
 
     @GetMapping("/logon")
